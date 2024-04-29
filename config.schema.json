@@ -22,7 +22,7 @@
       "type": "string",
       "title": "WebSocket URL",
       "description": "Die URL für WebSocket-Verbindungen.",
-      "default": "ws://meinserver.de:8080"
+      "default": "ws://meinserver.de:3000"
     },
     "doors": {
       "type": "array",
