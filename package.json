@@ -3,14 +3,16 @@
   "displayName": "DoorLux",
   "repository.url": "https://github.com/Xaradon/DoorLux",
   "bus.url": "https://github.com/Xaradon/DoorLux/issues",
-  "version": "1.0.0",
+  "version": "1.0.1-beta.0",
   "description": "",
   "private": false,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["doorlux"],
+  "keywords": [
+    "doorlux"
+  ],
   "author": "xaradon",
   "license": "GNU GPLv3",
   "dependencies": {
