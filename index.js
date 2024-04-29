@@ -26,8 +26,17 @@ class MyDoorsPlatform {
         this.ws.on('error', (error) => {
             this.log('WebSocket error:', error);
         });
-
+        this.initializeAccessories();
     }
+
+    initializeAccessories() {
+        const accessories = this.createAccessoriesBasedOnConfig();
+        accessories.forEach(accessory => {
+            this.api.registerPlatformAccessories("homebridge-doorlux", "doorlux", [accessory]);
+            this.accessories[accessory.UUID] = accessory;
+        });
+    }
+
 
     processWebSocketMessage(data) {
         let statusUpdate;
@@ -48,12 +57,13 @@ class MyDoorsPlatform {
     }
 
     createAccessoriesBasedOnConfig() {
-        // Erzeuge Zubehör-Objekte basierend auf der Plugin-Konfiguration
         let accessories = [];
         this.config.doors.forEach(door => {
             let uuid = UUIDGen.generate(door.id);
             let accessory = new Accessory(door.name, uuid);
-            // Konfiguriere das Zubehör hier
+            let service = new Service.ContactSensor(door.name, uuid);
+            service.setCharacteristic(Characteristic.ContactSensorState, Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
+            accessory.addService(service);
             accessories.push(accessory);
         });
         return accessories;
