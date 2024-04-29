@@ -46,28 +46,35 @@ class MyDoorsPlatform {
             let accessory = this.accessories[statusUpdate.id];
             if (accessory) {
                 let service = accessory.getService(Service.ContactSensor);
+                let newState = statusUpdate.state === 'geschlossen' ?
+                    Characteristic.ContactSensorState.CONTACT_DETECTED :
+                    Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
                 service.getCharacteristic(Characteristic.ContactSensorState)
-                    .updateValue(statusUpdate.state === 'geschlossen' ?
-                        Characteristic.ContactSensorState.CONTACT_DETECTED :
-                        Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
+                    .updateValue(newState);
+                this.log(`Updated door state to: ${newState === Characteristic.ContactSensorState.CONTACT_DETECTED ? 'Closed' : 'Open'}`);
             }
         } catch (error) {
             this.log('Error processing WebSocket message:', error);
         }
     }
 
+
     createAccessoriesBasedOnConfig() {
         let accessories = [];
         this.config.doors.forEach(door => {
             let uuid = UUIDGen.generate(door.id);
-            let accessory = new Accessory(door.name, uuid);
-            let service = new Service.ContactSensor(door.name, uuid);
+            let accessory = new this.api.platformAccessory(door.name, uuid);
+            let service = accessory.addService(Service.ContactSensor, door.name);
+
             service.setCharacteristic(Characteristic.ContactSensorState, Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
-            accessory.addService(service);
+
+            this.api.registerPlatformAccessories('homebridge-doorlux', 'doorlux', [accessory]);
+            this.accessories[accessory.UUID] = accessory;
             accessories.push(accessory);
         });
         return accessories;
     }
+
 
     configureAccessory(accessory) {
         this.accessories[accessory.UUID] = accessory;
