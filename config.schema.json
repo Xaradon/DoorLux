@@ -1,0 +1,43 @@
+{
+  "title": "DoorLux Plugin",
+  "description": "Konfiguration für das DoorLux Homebridge Plugin",
+  "type": "object",
+  "required": [
+    "websocketURL"
+  ],
+  "properties": {
+    "platform": {
+      "type": "string",
+      "title": "Plattform",
+      "default": "DoorLux",
+      "description": "Der Plattformname, wie er in der Homebridge-Konfiguration verwendet wird."
+    },
+    "websocketURL": {
+      "type": "string",
+      "title": "WebSocket URL",
+      "description": "Die URL für WebSocket-Verbindungen.",
+      "default": "ws://meinserver.de:8080"
+    },
+    "doors": {
+      "type": "array",
+      "title": "Türen",
+      "description": "Konfigurieren Sie jede Tür, die überwacht werden soll.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Tür-ID",
+            "description": "Die eindeutige ID der Tür."
+          },
+          "name": {
+            "type": "string",
+            "title": "Türname",
+            "description": "Der lesbare Name der Tür."
+          }
+        }
+      }
+    }
+  }
+}
