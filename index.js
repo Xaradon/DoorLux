@@ -26,6 +26,7 @@ class MyDoorsPlatform {
         this.ws.on('error', (error) => {
             this.log('WebSocket error:', error);
         });
+
     }
 
     processWebSocketMessage(data) {
