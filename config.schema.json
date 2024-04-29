@@ -2,6 +2,12 @@
   "title": "DoorLux Plugin",
   "description": "Konfiguration für das DoorLux Homebridge Plugin",
   "type": "object",
+  "pluginAlias": "Doorlux",
+  "pluginType": "platform",
+  "singular": true,
+  "headerDisplay": "DoorLux Homebridge Plugin",
+  "footerDisplay": "DoorLux",
+
   "required": [
     "websocketURL"
   ],
@@ -41,3 +47,4 @@
     }
   }
 }
+
