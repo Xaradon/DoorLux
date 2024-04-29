@@ -1,8 +1,11 @@
 {
   "name": "homebridge-doorlux",
   "displayName": "DoorLux",
-  "version": "0.0.1",
+  "repository.url": "https://github.com/Xaradon/DoorLux",
+  "bus.url": "https://github.com/Xaradon/DoorLux/issues",
+  "version": "1.0.0",
   "description": "",
+  "private": false,
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
