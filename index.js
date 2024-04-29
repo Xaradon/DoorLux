@@ -47,6 +47,18 @@ class MyDoorsPlatform {
         }
     }
 
+    createAccessoriesBasedOnConfig() {
+        // Erzeuge Zubehör-Objekte basierend auf der Plugin-Konfiguration
+        let accessories = [];
+        this.config.doors.forEach(door => {
+            let uuid = UUIDGen.generate(door.id);
+            let accessory = new Accessory(door.name, uuid);
+            // Konfiguriere das Zubehör hier
+            accessories.push(accessory);
+        });
+        return accessories;
+    }
+
     configureAccessory(accessory) {
         this.accessories[accessory.UUID] = accessory;
     }
