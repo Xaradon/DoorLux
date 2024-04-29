@@ -2,7 +2,7 @@
   "title": "DoorLux Plugin",
   "description": "Konfiguration für das DoorLux Homebridge Plugin",
   "type": "object",
-  "pluginAlias": "Doorlux",
+  "pluginAlias": "doorlux",
   "pluginType": "platform",
   "singular": true,
   "headerDisplay": "DoorLux Homebridge Plugin",
@@ -15,7 +15,7 @@
     "platform": {
       "type": "string",
       "title": "Plattform",
-      "default": "DoorLux",
+      "default": "doorlux",
       "description": "Der Plattformname, wie er in der Homebridge-Konfiguration verwendet wird."
     },
     "websocketURL": {
