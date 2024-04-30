@@ -1,4 +1,4 @@
-const DoorLuxPlatform = require('homebridge-lib').Platform;
+import {DoorLuxPlatform} from 'homebridge-lib/Platform'
 
 class DoorLuxMain extends DoorLuxPlatform {
     constructor(log, config, api) {
