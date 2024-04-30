@@ -1,6 +1,6 @@
 {
   "pluginAlias": "doorlux",
-  "pluginType": "platfrom",
+  "pluginType": "platform",
   "singular": true,
   "schema": {
     "type": "object",
