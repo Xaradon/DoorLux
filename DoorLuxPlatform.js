@@ -1,6 +1,12 @@
 'use strict';
 
-const { Platform } = require('homebridge-lib');
+let Platform;
+
+(async () => {
+    const lib = await import('homebridge-lib');
+    Platform = lib.Platform;
+})();
+
 
 class DoorLuxPlatform extends Platform {
     constructor(log, config, api) {
