@@ -1,9 +1,12 @@
-// Dynamically import the necessary modules
-let Platform;
 
 (async () => {
     const lib = await import('homebridge-lib');
-    Platform = lib.Platform;
+    const Platform = lib.Platform;
+
+    if (!Platform) {
+        console.error('Failed to load Platform from homebridge-lib');
+        return; // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
+    }
 
     // Define the DoorLuxPlatform class after the Platform has been imported
     class DoorLuxPlatform extends Platform {
