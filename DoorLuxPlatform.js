@@ -133,7 +133,8 @@ class DoorLuxPlatform extends Platform {
 
 }
 
-module.exports = {DoorLuxPlatform};
+module.exports = DoorLuxPlatform;
+
 /*
 module.exports = (homebridge) => {
     homebridge.registerPlatform("homebridge-doorlux", "doorlux", DoorLuxMain);
