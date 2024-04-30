@@ -6,7 +6,7 @@ const Characteristic = hap.Characteristic;
 
 module.exports = (homebridge) => {
     console.log('Homebridge API version: ' + homebridge.version);
-    homebridge.registerAccessory("homebridge-doorlux", "doorlux", DoorLuxMain);
+    homebridge.registerPlatform("homebridge-doorlux", "doorlux", DoorLuxMain);
 };
 
 class DoorLuxMain {
