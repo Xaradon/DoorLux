@@ -1,6 +1,6 @@
-const { HomebridgePlatform } = require('homebridge-lib');
+const DoorLuxPlatform = require('homebridge-lib').Platform;
 
-class DoorLuxMain extends HomebridgePlatform {
+class DoorLuxMain extends DoorLuxPlatform {
     constructor(log, config, api) {
         super(log, config, api);
 
