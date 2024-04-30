@@ -1,14 +1,10 @@
-'use strict'
+'use strict';
 
-import { createRequire } from 'node:module'
+const { DoorLuxPlatform } = require('./DoorLuxPlatform'); // Importiere die DoorLuxPlatform aus dem entsprechenden CommonJS-Modul
+const packageJson = require('./package.json');
 
-import { DoorLuxPlatform } from '.DoorLuxPlatform'
-
-const require = createRequire(import.meta.url)
-const packageJson = require('./package.json')
-
-function main (homebridge) {
-    DoorLuxPlatform.loadPlatform(homebridge, packageJson, 'doorlux', DoorLuxPlatform)
+function main(homebridge) {
+    DoorLuxPlatform.loadPlatform(homebridge, packageJson, 'doorlux', DoorLuxPlatform);
 }
 
-export { main as default }
+module.exports = main; // Exportiere die main-Funktion als Modul
