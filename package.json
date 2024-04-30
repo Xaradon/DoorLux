@@ -26,7 +26,7 @@
   },
   "dependencies": {
     "ws": "^7.4.6",
-    "homebridge-lib": "^7.0.0",
+    "homebridge-lib": "^7.0.0"
   },
   "homebridge": {
     "pluginType": "platform"
