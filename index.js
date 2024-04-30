@@ -1,5 +1,5 @@
 const WebSocket = require('ws');
-const hap = require('homebridge-lib');
+const hap = require('hap-nodejs');
 const Accessory = hap.Accessory;
 const Service = hap.Service;
 const Characteristic = hap.Characteristic;
