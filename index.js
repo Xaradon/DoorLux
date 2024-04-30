@@ -25,7 +25,7 @@ class DoorLuxMain {
             .getCharacteristic(Characteristic.LockTargetState)
             .on('get', this.handleLockTargetStateGet.bind(this))
             .on('set', this.handleLockTargetStateSet.bind(this));
-
+        this.log("Door Lux start init Websocket")
         this.initWebSocket();
     }
 

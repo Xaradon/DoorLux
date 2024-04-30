@@ -25,7 +25,6 @@
     "homebridge": ">=1.3.0"
   },
   "dependencies": {
-    "hap-nodejs": "0.12.0",
     "ws": "^7.4.6"
   },
   "homebridge": {
