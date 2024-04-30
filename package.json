@@ -12,6 +12,7 @@
   },
   "files": [
     "index.js",
+    "DoorLuxPlatfrom.js",
     "config.schema.json"
   ],
   "keywords": [
