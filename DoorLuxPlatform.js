@@ -1,6 +1,5 @@
 'use strict';
 
-const WebSocket = require('ws');
 const { Platform } = require('homebridge-lib');
 
 class DoorLuxPlatform extends Platform {
@@ -134,7 +133,7 @@ class DoorLuxPlatform extends Platform {
 
 }
 
-export {DoorLuxPlatform}
+module.exports = {DoorLuxPlatform};
 /*
 module.exports = (homebridge) => {
     homebridge.registerPlatform("homebridge-doorlux", "doorlux", DoorLuxMain);
