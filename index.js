@@ -1,87 +1,120 @@
-let Accessory, Service, Characteristic, UUIDGen;
+const WebSocket = require('ws');
+const hap = require('hap-nodejs');
+const Accessory = hap.Accessory;
+const Service = hap.Service;
+const Characteristic = hap.Characteristic;
 
 module.exports = (homebridge) => {
     console.log('Homebridge API version: ' + homebridge.version);
-    Accessory = homebridge.platformAccessory;
-    Service = homebridge.hap.Service;
-    Characteristic = homebridge.hap.Characteristic;
-    UUIDGen = homebridge.hap.uuid;
-    homebridge.registerPlatform("homebridge-doorlux", "doorlux", MyDoorsPlatform, true);
+    homebridge.registerAccessory("homebridge-doorlux", "doorlux", DoorLuxMain);
 };
 
-class MyDoorsPlatform {
+class DoorLuxMain {
     constructor(log, config, api) {
         this.log = log;
+        this.config = config;
         this.api = api;
-        this.accessories = {};
-        this.config = config || {};
-        this.ws = new (require('ws'))(this.config.websocketURL);
+        this.doorStates = new Map();
 
-        this.ws.on('open', () => {
-            this.log('WebSocket connection established');
-        });
+        this.service = new Service.LockMechanism(this.config.name);
+        this.service
+            .getCharacteristic(Characteristic.LockCurrentState)
+            .on('get', this.handleLockCurrentStateGet.bind(this));
 
-        this.ws.on('message', this.processWebSocketMessage.bind(this));
+        this.service
+            .getCharacteristic(Characteristic.LockTargetState)
+            .on('get', this.handleLockTargetStateGet.bind(this))
+            .on('set', this.handleLockTargetStateSet.bind(this));
 
-        this.ws.on('error', (error) => {
-            this.log('WebSocket error:', error);
-        });
-        this.initializeAccessories();
+        this.initWebSocket();
     }
 
-    initializeAccessories() {
-        const accessories = this.createAccessoriesBasedOnConfig();
-        accessories.forEach(accessory => {
-            this.api.registerPlatformAccessories("homebridge-doorlux", "doorlux", [accessory]);
-            this.accessories[accessory.UUID] = accessory;
+    initWebSocket() {
+        this.websocket = new WebSocket(this.config.websocketUrl);
+
+        this.websocket.on('open', () => {
+            this.log("WebSocket connection established");
+        });
+
+        this.websocket.on('message', this.handleWebsocketMessage.bind(this));
+
+        this.websocket.on('close', () => {
+            this.log("WebSocket connection closed. Attempting to reconnect...");
+            setTimeout(() => this.initWebSocket(), 5000);  // Reconnect after 5 seconds
+        });
+
+        this.websocket.on('error', (error) => {
+            this.log("WebSocket error:", error);
         });
     }
 
-
-    processWebSocketMessage(data) {
-        let statusUpdate;
-        try {
-            statusUpdate = JSON.parse(data);
-            this.log('Received update:', statusUpdate);
-            let accessory = this.accessories[statusUpdate.id];
-            if (accessory) {
-                let service = accessory.getService(Service.ContactSensor);
-                let newState = statusUpdate.state === 'geschlossen' ?
-                    Characteristic.ContactSensorState.CONTACT_DETECTED :
-                    Characteristic.ContactSensorState.CONTACT_NOT_DETECTED;
-                service.getCharacteristic(Characteristic.ContactSensorState)
-                    .updateValue(newState);
-                this.log(`Updated door state to: ${newState === Characteristic.ContactSensorState.CONTACT_DETECTED ? 'Closed' : 'Open'}`);
-            }
-        } catch (error) {
-            this.log('Error processing WebSocket message:', error);
+    handleLockCurrentStateGet(callback) {
+        if (this.doorStates.has(this.config.doorID)) {
+            const doorState = this.doorStates.get(this.config.doorID).current;
+            this.log(`Retrieving current lock state for door ${this.config.doorID}: ${doorState}`);
+            callback(null, doorState);
+        } else {
+            this.log(`No state found for door ${this.config.doorID}`);
+            callback(new Error("No state found for door"));
         }
     }
 
-
-    createAccessoriesBasedOnConfig() {
-        let accessories = [];
-        this.config.doors.forEach(door => {
-            let uuid = UUIDGen.generate(door.id);
-            let accessory = new this.api.platformAccessory(door.name, uuid);
-            let service = accessory.addService(Service.ContactSensor, door.name);
-
-            service.setCharacteristic(Characteristic.ContactSensorState, Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
-
-            this.api.registerPlatformAccessories('homebridge-doorlux', 'doorlux', [accessory]);
-            this.accessories[accessory.UUID] = accessory;
-            accessories.push(accessory);
-        });
-        return accessories;
+    handleLockTargetStateGet(callback) {
+        if (this.doorStates.has(this.config.doorID)) {
+            const doorState = this.doorStates.get(this.config.doorID).target;
+            this.log(`Retrieving target lock state for door ${this.config.doorID}: ${doorState}`);
+            callback(null, doorState);
+        } else {
+            this.log(`No target state found for door ${this.config.doorID}`);
+            callback(new Error("No target state found for door"));
+        }
     }
 
-
-    configureAccessory(accessory) {
-        this.accessories[accessory.UUID] = accessory;
+    handleLockTargetStateSet(value, callback) {
+        this.log(`Received set target state for door ${this.config.doorID} to: ${value === Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
+        // Da keine Aktion erforderlich ist, bestätigen wir den Befehl sofort
+        this.log('Not implemented yet!');
+        callback(null); // Erfolg
     }
 
-    accessories(callback) {
-        let configuredAccessories = Object.values(this.accessories);
-        callback(configuredAccessories);
+    handleWebsocketMessage(message) {
+        // Implement logic to process messages from WebSocket
+        // Example: Parse message and update HomeKit state
+        this.log("Received WebSocket message:", message);
+        try{
+            const data = JSON.parse(message);
+            if(data.doorID && data.doorState){
+                this.updateLockState(data.doorID,  data.doorState);
+
+            }else{
+                this.log("Invalid Message Format, missing DoorID or / and DoorState");
+            }
+        } catch (error){
+            this.log("Websocket Error Message: ", error);
+        }
+
+    }
+
+    updateLockState(doorID, doorState){
+        if(this.config.doorID === doorID){ //Check if DoorID exists in Config
+            let newState = (doorState === 'closed') ?
+                Characteristic.LockCurrentState.SECURED :
+                Characteristic.LockCurrentState.UNSECURED;
+
+            this.doorStates.set(doorID, {
+                current: currentState,
+                target: targetState
+            });
+
+            // Update both Current and Target State to reflect the new state accurately
+            this.service.getCharacteristic(Characteristic.LockCurrentState)
+                .updateValue(newState);
+            this.service.getCharacteristic(Characteristic.LockTargetState)
+                .updateValue(newState);
+
+            this.log(`Door lock state updated to: ${state}`);
+        } else {
+            this.log(`Received update for unconfigured door ID: ${turID}`);
+        }
     }
 }

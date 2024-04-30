@@ -1,50 +1,43 @@
 {
-  "title": "DoorLux Plugin",
-  "description": "Konfiguration für das DoorLux Homebridge Plugin",
-  "type": "object",
   "pluginAlias": "doorlux",
-  "pluginType": "platform",
+  "pluginType": "accessory",
   "singular": true,
-  "headerDisplay": "DoorLux Homebridge Plugin",
-  "footerDisplay": "DoorLux",
-
-  "required": [
-    "websocketURL"
-  ],
-  "properties": {
-    "platform": {
-      "type": "string",
-      "title": "Plattform",
-      "default": "doorlux",
-      "description": "Der Plattformname, wie er in der Homebridge-Konfiguration verwendet wird."
-    },
-    "websocketURL": {
-      "type": "string",
-      "title": "WebSocket URL",
-      "description": "Die URL für WebSocket-Verbindungen.",
-      "default": "ws://meinserver.de:3000"
-    },
-    "doors": {
-      "type": "array",
-      "title": "Türen",
-      "description": "Konfigurieren Sie jede Tür, die überwacht werden soll.",
-      "items": {
-        "type": "object",
-        "required": ["id", "name"],
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Tür-ID",
-            "description": "Die eindeutige ID der Tür."
-          },
-          "name": {
-            "type": "string",
-            "title": "Türname",
-            "description": "Der lesbare Name der Tür."
+  "schema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Name",
+        "default": "DoorLux",
+        "description": "Name des Türschloss-Accessoires in HomeKit"
+      },
+      "websocketUrl": {
+        "type": "string",
+        "title": "WebSocket URL",
+        "description": "Die URL des WebSocket-Servers, der die Türzustände sendet",
+        "default": "ws://example.com"
+      },
+      "doors": {
+        "type": "array",
+        "title": "Türen",
+        "items": {
+          "type": "object",
+          "properties": {
+            "doorID": {
+              "type": "string",
+              "title": "Tür-ID",
+              "description": "Einzigartige ID der Tür"
+            },
+            "name": {
+              "type": "string",
+              "title": "Name",
+              "description": "Anzeigename der Tür in HomeKit"
+            }
           }
-        }
+        },
+        "description": "Liste der Türen, die überwacht werden sollen"
       }
-    }
+    },
+    "required": ["name", "websocketUrl", "doors"]
   }
 }
-
