@@ -27,7 +27,6 @@
   "dependencies": {
     "ws": "^7.4.6",
     "homebridge-lib": "^7.0.0",
-    "hap-nodejs": "0.12.0"
   },
   "homebridge": {
     "pluginType": "platform"
