@@ -19,6 +19,7 @@ class DoorLuxPlatform extends Platform {
         if (Array.isArray(this.config.doors)) {
             // Initialize door services for each door in the config
             this.config.doors.forEach(doorConfig => {
+                this.log(`Creating Lock Service for Door with ID:  ${doorConfig.doorID}`);
                 this.createLockService(doorConfig);
             });
         } else {
