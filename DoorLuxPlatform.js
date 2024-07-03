@@ -1,6 +1,14 @@
-import { Platform } from 'homebridge-lib/lib/Platform.js';
-import { API } from 'homebridge';
+import * as homebridgeLib from 'homebridge-lib';
 
+// Stellen Sie sicher, dass `Platform` korrekt extrahiert wird
+const { Platform } = homebridgeLib;
+
+if (!Platform) {
+    console.error('Failed to load Platform from homebridge-lib');
+    process.exit(1); // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
+}
+
+// Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
     constructor(log, config, api) {
         super(log, config, api);
