@@ -1,6 +1,6 @@
-import { Platform } from 'homebridge-lib/Platform.js';
-import { HttpClient } from 'homebridge-lib/HttpClient.js'; // Falls benötigt
-import { OptionParser } from 'homebridge-lib/OptionParser.js'; // Falls benötigt
+import { Platform } from 'homebridge-lib/Platform';
+import { HttpClient } from 'homebridge-lib/HttpClient'; // Falls benötigt
+import { OptionParser } from 'homebridge-lib/OptionParser'; // Falls benötigt
 
 // Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
