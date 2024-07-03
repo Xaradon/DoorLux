@@ -1,10 +1,6 @@
-import homebridgeLib from 'homebridge-lib';
-
-const { Platform } = homebridgeLib;
-
-if (!Platform) {
-    throw new Error('Failed to load Platform from homebridge-lib');
-}
+import { Platform } from 'homebridge-lib/Platform.js';
+import { HttpClient } from 'homebridge-lib/HttpClient.js'; // Falls benötigt
+import { OptionParser } from 'homebridge-lib/OptionParser.js'; // Falls benötigt
 
 // Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
