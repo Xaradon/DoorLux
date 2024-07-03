@@ -1,4 +1,4 @@
-import { Platform } from 'homebridge-lib/Platform';
+import { Platform } from 'homebridge-lib/Platform.js';
 import WebSocket from 'ws';
 
 // Define the DoorLuxPlatform class after the Platform has been imported
@@ -10,12 +10,20 @@ class DoorLuxPlatform extends Platform {
         this.hap = api.hap;
         this.log = log;
         this.config = config;
+        this.api = api;
 
         // Initialize a map for door states
         this.doorStates = new Map();
 
-        // Create the LockMechanism Service
-        this.createLockService();
+        // Check if doors are defined in config
+        if (Array.isArray(this.config.doors)) {
+            // Initialize door services for each door in the config
+            this.config.doors.forEach(doorConfig => {
+                this.createLockService(doorConfig);
+            });
+        } else {
+            this.log.error('No doors defined in config');
+        }
 
         // Initialize WebSocket connection
         this.initWebSocket();
@@ -83,7 +91,8 @@ class DoorLuxPlatform extends Platform {
     }
 
     async handleLockTargetStateSet(doorID, value) {
-        this.log(`Received set target state for door ${doorID} to: ${value === this.hap.Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
+        const { Characteristic } = this.hap;
+        this.log(`Received set target state for door ${doorID} to: ${value === Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
         // As no action is required, confirm the command immediately
         this.log('Not implemented yet!');
         return;
