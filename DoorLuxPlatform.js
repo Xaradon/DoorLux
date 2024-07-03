@@ -19,7 +19,7 @@ class DoorLuxPlatform extends Platform {
         if (Array.isArray(this.config.doors)) {
             // Initialize door services for each door in the config
             this.config.doors.forEach(doorConfig => {
-                this.log(`Creating Lock Service for Door with ID:  ${doorConfig.doorID}`);
+                this.log(`Creating Lock Service for Door with ID: ${doorConfig.doorID}`);
                 this.createLockService(doorConfig);
             });
         } else {
@@ -35,7 +35,7 @@ class DoorLuxPlatform extends Platform {
 
         // Create a LockMechanism Service with the specified name
         const service = new Service.LockMechanism(doorConfig.name);
-        this.doorStates.set(doorConfig.doorID, {
+        this.doorStates.set(String(doorConfig.doorID), {
             service: service,
             current: Characteristic.LockCurrentState.UNSECURED,
             target: Characteristic.LockTargetState.UNSECURED
@@ -70,6 +70,7 @@ class DoorLuxPlatform extends Platform {
     }
 
     async handleLockCurrentStateGet(doorID) {
+        doorID = String(doorID);  // Ensure doorID is a string
         if (this.doorStates.has(doorID)) {
             const doorState = this.doorStates.get(doorID).current;
             this.log(`Retrieving current lock state for door ${doorID}: ${doorState}`);
@@ -81,6 +82,7 @@ class DoorLuxPlatform extends Platform {
     }
 
     async handleLockTargetStateGet(doorID) {
+        doorID = String(doorID);  // Ensure doorID is a string
         if (this.doorStates.has(doorID)) {
             const doorState = this.doorStates.get(doorID).target;
             this.log(`Retrieving target lock state for door ${doorID}: ${doorState}`);
@@ -93,6 +95,7 @@ class DoorLuxPlatform extends Platform {
 
     async handleLockTargetStateSet(doorID, value) {
         const { Characteristic } = this.hap;
+        doorID = String(doorID);  // Ensure doorID is a string
         this.log(`Received set target state for door ${doorID} to: ${value === Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
         // As no action is required, confirm the command immediately
         this.log('Not implemented yet!');
@@ -104,7 +107,7 @@ class DoorLuxPlatform extends Platform {
         try {
             const data = JSON.parse(message);
             if (data.doorID && data.doorState) {
-                this.updateLockState(data.doorID, data.doorState);
+                this.updateLockState(String(data.doorID), data.doorState);  // Ensure doorID is a string
             } else {
                 this.log("Invalid Message Format, missing DoorID or / and DoorState");
             }
@@ -114,6 +117,7 @@ class DoorLuxPlatform extends Platform {
     }
 
     updateLockState(doorID, doorState) {
+        doorID = String(doorID);  // Ensure doorID is a string
         if (this.doorStates.has(doorID)) {
             const { Characteristic } = this.hap;
             const currentState = this.doorStates.get(doorID).current;
