@@ -1,6 +1,6 @@
 import { Platform } from 'homebridge-lib/Platform';
 import WebSocket from 'ws';
-import { API, PlatformAccessory, Characteristic, Service, uuid } from 'homebridge'; // Import necessary components from Homebridge API
+import { DoorLuxAccessory } from './DoorLuxAccessory.js';
 
 // Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
@@ -32,31 +32,15 @@ class DoorLuxPlatform extends Platform {
     }
 
     createLockService(doorConfig) {
-        // Create a LockMechanism Service with the specified name
-        const service = new Service.LockMechanism(doorConfig.name);
-
-        // Create a PlatformAccessory for each door
-        const accessory = new PlatformAccessory(doorConfig.name, uuid.generate(doorConfig.doorID));
-
-        accessory.addService(service);
-
+        const accessory = new DoorLuxAccessory(this, doorConfig);
         this.doorStates.set(String(doorConfig.doorID), {
             accessory: accessory,
-            service: service,
-            current: Characteristic.LockCurrentState.UNSECURED,
-            target: Characteristic.LockTargetState.UNSECURED
+            current: this.hap.Characteristic.LockCurrentState.UNSECURED,
+            target: this.hap.Characteristic.LockTargetState.UNSECURED
         });
 
-        // Define the 'get' and 'set' events for the characteristics
-        service.getCharacteristic(Characteristic.LockCurrentState)
-            .onGet(() => this.handleLockCurrentStateGet(doorConfig.doorID));
-
-        service.getCharacteristic(Characteristic.LockTargetState)
-            .onGet(() => this.handleLockTargetStateGet(doorConfig.doorID))
-            .onSet((value) => this.handleLockTargetStateSet(doorConfig.doorID, value));
-
         // Register the accessory
-        this.api.registerPlatformAccessories('homebridge-doorlux', 'doorlux', [accessory]);
+        this.api.registerPlatformAccessories('homebridge-doorlux', 'doorlux', [accessory.accessory]);
     }
 
     initWebSocket() {
@@ -76,39 +60,6 @@ class DoorLuxPlatform extends Platform {
         this.websocket.on('error', (error) => {
             this.log("WebSocket error:", error);
         });
-    }
-
-    async handleLockCurrentStateGet(doorID) {
-        doorID = String(doorID);  // Ensure doorID is a string
-        if (this.doorStates.has(doorID)) {
-            const doorState = this.doorStates.get(doorID).current;
-            this.log(`Retrieving current lock state for door ${doorID}: ${doorState}`);
-            return doorState;
-        } else {
-            this.log(`No state found for door ${doorID}`);
-            throw new Error("No state found for door");
-        }
-    }
-
-    async handleLockTargetStateGet(doorID) {
-        doorID = String(doorID);  // Ensure doorID is a string
-        if (this.doorStates.has(doorID)) {
-            const doorState = this.doorStates.get(doorID).target;
-            this.log(`Retrieving target lock state for door ${doorID}: ${doorState}`);
-            return doorState;
-        } else {
-            this.log(`No target state found for door ${doorID}`);
-            throw new Error("No target state found for door");
-        }
-    }
-
-    async handleLockTargetStateSet(doorID, value) {
-        const { Characteristic } = this.hap;
-        doorID = String(doorID);  // Ensure doorID is a string
-        this.log(`Received set target state for door ${doorID} to: ${value === Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
-        // As no action is required, confirm the command immediately
-        this.log('Not implemented yet!');
-        return;
     }
 
     handleWebSocketMessage(message) {
@@ -134,12 +85,11 @@ class DoorLuxPlatform extends Platform {
 
             this.doorStates.set(doorID, {
                 accessory: this.doorStates.get(doorID).accessory,
-                service: this.doorStates.get(doorID).service,
                 current: currentState,
                 target: targetState
             });
 
-            const service = this.doorStates.get(doorID).service;
+            const service = this.doorStates.get(doorID).accessory.lockService;
             service.getCharacteristic(Characteristic.LockCurrentState)
                 .updateValue(targetState);
             service.getCharacteristic(Characteristic.LockTargetState)
