@@ -1,11 +1,9 @@
-import * as homebridgeLib from 'homebridge-lib';
+import homebridgeLib from 'homebridge-lib';
 
-// Stellen Sie sicher, dass `Platform` korrekt extrahiert wird
 const { Platform } = homebridgeLib;
 
 if (!Platform) {
-    console.error('Failed to load Platform from homebridge-lib');
-    return; // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
+    throw new Error('Failed to load Platform from homebridge-lib');
 }
 
 // Define the DoorLuxPlatform class after the Platform has been imported
