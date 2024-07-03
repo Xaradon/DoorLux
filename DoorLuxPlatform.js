@@ -21,19 +21,24 @@ class DoorLuxPlatform extends Platform {
         this.initWebSocket();
     }
 
-    createLockService() {
+    createLockService(doorConfig) {
         const { Service, Characteristic } = this.hap;
 
         // Create a LockMechanism Service with the specified name
-        this.service = new Service.LockMechanism(this.config.name);
+        const service = new Service.LockMechanism(doorConfig.name);
+        this.doorStates.set(doorConfig.doorID, {
+            service: service,
+            current: Characteristic.LockCurrentState.UNSECURED,
+            target: Characteristic.LockTargetState.UNSECURED
+        });
 
         // Define the 'get' and 'set' events for the characteristics
-        this.service.getCharacteristic(Characteristic.LockCurrentState)
-            .onGet(this.handleLockCurrentStateGet.bind(this));
+        service.getCharacteristic(Characteristic.LockCurrentState)
+            .onGet(() => this.handleLockCurrentStateGet(doorConfig.doorID));
 
-        this.service.getCharacteristic(Characteristic.LockTargetState)
-            .onGet(this.handleLockTargetStateGet.bind(this))
-            .onSet(this.handleLockTargetStateSet.bind(this));
+        service.getCharacteristic(Characteristic.LockTargetState)
+            .onGet(() => this.handleLockTargetStateGet(doorConfig.doorID))
+            .onSet((value) => this.handleLockTargetStateSet(doorConfig.doorID, value));
     }
 
     initWebSocket() {
@@ -55,30 +60,30 @@ class DoorLuxPlatform extends Platform {
         });
     }
 
-    async handleLockCurrentStateGet() {
-        if (this.doorStates.has(this.config.doorID)) {
-            const doorState = this.doorStates.get(this.config.doorID).current;
-            this.log(`Retrieving current lock state for door ${this.config.doorID}: ${doorState}`);
+    async handleLockCurrentStateGet(doorID) {
+        if (this.doorStates.has(doorID)) {
+            const doorState = this.doorStates.get(doorID).current;
+            this.log(`Retrieving current lock state for door ${doorID}: ${doorState}`);
             return doorState;
         } else {
-            this.log(`No state found for door ${this.config.doorID}`);
+            this.log(`No state found for door ${doorID}`);
             throw new Error("No state found for door");
         }
     }
 
-    async handleLockTargetStateGet() {
-        if (this.doorStates.has(this.config.doorID)) {
-            const doorState = this.doorStates.get(this.config.doorID).target;
-            this.log(`Retrieving target lock state for door ${this.config.doorID}: ${doorState}`);
+    async handleLockTargetStateGet(doorID) {
+        if (this.doorStates.has(doorID)) {
+            const doorState = this.doorStates.get(doorID).target;
+            this.log(`Retrieving target lock state for door ${doorID}: ${doorState}`);
             return doorState;
         } else {
-            this.log(`No target state found for door ${this.config.doorID}`);
+            this.log(`No target state found for door ${doorID}`);
             throw new Error("No target state found for door");
         }
     }
 
-    async handleLockTargetStateSet(value) {
-        this.log(`Received set target state for door ${this.config.doorID} to: ${value === Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
+    async handleLockTargetStateSet(doorID, value) {
+        this.log(`Received set target state for door ${doorID} to: ${value === this.hap.Characteristic.LockTargetState.SECURED ? 'SECURED' : 'UNSECURED'}`);
         // As no action is required, confirm the command immediately
         this.log('Not implemented yet!');
         return;
@@ -99,22 +104,24 @@ class DoorLuxPlatform extends Platform {
     }
 
     updateLockState(doorID, doorState) {
-        if (this.config.doorID === doorID) {
+        if (this.doorStates.has(doorID)) {
             const { Characteristic } = this.hap;
             const currentState = this.doorStates.get(doorID).current;
             const targetState = (doorState === 'closed') ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
 
             this.doorStates.set(doorID, {
+                service: this.doorStates.get(doorID).service,
                 current: currentState,
                 target: targetState
             });
 
-            this.service.getCharacteristic(Characteristic.LockCurrentState)
+            const service = this.doorStates.get(doorID).service;
+            service.getCharacteristic(Characteristic.LockCurrentState)
                 .updateValue(targetState);
-            this.service.getCharacteristic(Characteristic.LockTargetState)
+            service.getCharacteristic(Characteristic.LockTargetState)
                 .updateValue(targetState);
 
-            this.log(`Door lock state updated to: ${targetState}`);
+            this.log(`Door lock state updated to: ${targetState} for door ID: ${doorID}`);
         } else {
             this.log(`Received update for unconfigured door ID: ${doorID}`);
         }
