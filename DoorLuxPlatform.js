@@ -1,5 +1,4 @@
-import { Platform } from 'homebridge-lib';
-
+import { Platform } from 'homebridge-lib/Platform';
 if (!Platform) {
     console.error('Failed to load Platform from homebridge-lib');
     process.exit(1); // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
