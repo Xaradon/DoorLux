@@ -6,10 +6,15 @@ async function main(homebridge) {
         const { DoorLuxPlatform } = await import('./DoorLuxPlatform.js');
 
         if (DoorLuxPlatform && DoorLuxPlatform.loadPlatform) {
-            DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
-            console.log("Loaded DoorLuxPlatformnp")
+            if(DoorLuxPlatform.loadPlatform) {
+                DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
+                console.log("Loaded DoorLuxPlatformnp")
+            }
+            else{
+                console.error("Failed to load the DoorLuxPlatform - loadPlatform was false")
+            }
         } else {
-            console.error("Failed to load the DoorLuxPlatform or the 'loadPlatform' method is not defined.");
+            console.error("Failed to load the DoorLuxPlatform ");
         }
     } catch (error) {
         console.error("Error loading the DoorLuxPlatform:", error);
