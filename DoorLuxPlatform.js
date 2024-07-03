@@ -1,5 +1,4 @@
-const lib = require('homebridge-lib');
-const Platform = lib.Platform;
+import { Platform } from 'homebridge-lib';
 
 if (!Platform) {
     console.error('Failed to load Platform from homebridge-lib');
@@ -123,4 +122,4 @@ class DoorLuxPlatform extends Platform {
 }
 
 // Export the class
-module.exports = { DoorLuxPlatform };
+export { DoorLuxPlatform };

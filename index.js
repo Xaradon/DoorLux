@@ -1,8 +1,12 @@
 'use strict';
 
+import { DoorLuxPlatform } from './DoorLuxPlatform.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 async function main(homebridge) {
     try {
-        const { DoorLuxPlatform } = require('./DoorLuxPlatform.js');
+        console.log("Trying to load DoorLuxPlatform");
         console.log("Imported DoorLuxPlatform:", DoorLuxPlatform);
 
         if (DoorLuxPlatform) {
@@ -20,4 +24,4 @@ async function main(homebridge) {
     }
 }
 
-module.exports = main;
+export default main;
