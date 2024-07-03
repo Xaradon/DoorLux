@@ -5,7 +5,7 @@ async function main(homebridge) {
         // Stellen Sie sicher, dass Sie die vollständige Dateierweiterung angeben, wenn nötig
         const { DoorLuxPlatform } = await import('./DoorLuxPlatform.js');
 
-        if (DoorLuxPlatform && DoorLuxPlatform.loadPlatform) {
+        if (DoorLuxPlatform) {
             if(DoorLuxPlatform.loadPlatform) {
                 DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
                 console.log("Loaded DoorLuxPlatformnp")
