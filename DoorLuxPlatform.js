@@ -31,13 +31,13 @@ class DoorLuxPlatform extends Platform {
     }
 
     createLockService(doorConfig) {
-        const { Service, Characteristic, Accessory } = this.hap;
+        const { Service, Characteristic, PlatformAccessory } = this.hap;
 
         // Create a LockMechanism Service with the specified name
         const service = new Service.LockMechanism(doorConfig.name);
 
-        // Create an accessory for each door
-        const accessory = new Accessory(doorConfig.name, this.api.hap.uuid.generate(doorConfig.doorID));
+        // Create a PlatformAccessory for each door
+        const accessory = new PlatformAccessory(doorConfig.name, this.api.hap.uuid.generate(doorConfig.doorID));
 
         accessory.addService(service);
 
