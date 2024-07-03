@@ -7,6 +7,7 @@ async function main(homebridge) {
 
         if (DoorLuxPlatform && DoorLuxPlatform.loadPlatform) {
             DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
+            console.log("Loaded DoorLuxPlatformnp")
         } else {
             console.error("Failed to load the DoorLuxPlatform or the 'loadPlatform' method is not defined.");
         }
