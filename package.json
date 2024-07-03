@@ -3,7 +3,7 @@
   "displayName": "DoorLux",
   "repository.url": "https://github.com/Xaradon/DoorLux",
   "bus.url": "https://github.com/Xaradon/DoorLux/issues",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "description": "",
   "private": false,
   "main": "index.js",
