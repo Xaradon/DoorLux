@@ -1,6 +1,5 @@
 import { Platform } from 'homebridge-lib/Platform';
-import { HttpClient } from 'homebridge-lib/HttpClient'; // Falls benötigt
-import { OptionParser } from 'homebridge-lib/OptionParser'; // Falls benötigt
+import WebSocket from 'ws';
 
 // Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
@@ -38,7 +37,6 @@ class DoorLuxPlatform extends Platform {
     }
 
     initWebSocket() {
-        const WebSocket = require('ws');
         this.websocket = new WebSocket(this.config.websocketUrl);
 
         // Define event handlers for the WebSocket connection
