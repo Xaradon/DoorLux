@@ -1,5 +1,6 @@
 import { Platform } from 'homebridge-lib/Platform';
 import WebSocket from 'ws';
+import { API, PlatformAccessory, Characteristic, Service, uuid } from 'homebridge'; // Import necessary components from Homebridge API
 
 // Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
@@ -31,13 +32,11 @@ class DoorLuxPlatform extends Platform {
     }
 
     createLockService(doorConfig) {
-        const { Service, Characteristic, PlatformAccessory } = this.hap;
-
         // Create a LockMechanism Service with the specified name
         const service = new Service.LockMechanism(doorConfig.name);
 
         // Create a PlatformAccessory for each door
-        const accessory = new PlatformAccessory(doorConfig.name, this.api.hap.uuid.generate(doorConfig.doorID));
+        const accessory = new PlatformAccessory(doorConfig.name, uuid.generate(doorConfig.doorID));
 
         accessory.addService(service);
 
