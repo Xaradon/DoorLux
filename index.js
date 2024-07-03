@@ -2,19 +2,21 @@
 
 async function main(homebridge) {
     try {
-        // Stellen Sie sicher, dass Sie die vollständige Dateierweiterung angeben, wenn nötig
+        console.log("Trying to load DoorLuxPlatform");
         const { DoorLuxPlatform } = await import('./DoorLuxPlatform.js');
+        console.log("Imported DoorLuxPlatform:", DoorLuxPlatform);
 
         if (DoorLuxPlatform) {
-            if(DoorLuxPlatform.loadPlatform) {
+            console.log("DoorLuxPlatform is defined");
+            if (DoorLuxPlatform.loadPlatform) {
+                console.log("DoorLuxPlatform.loadPlatform is defined");
                 DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
-                console.log("Loaded DoorLuxPlatformnp")
-            }
-            else{
-                console.error("Failed to load the DoorLuxPlatform - loadPlatform was false")
+                console.log("Loaded DoorLuxPlatform");
+            } else {
+                console.error("Failed to load the DoorLuxPlatform - loadPlatform was false");
             }
         } else {
-            console.error("Failed to load the DoorLuxPlatform ");
+            console.error("Failed to load the DoorLuxPlatform");
         }
     } catch (error) {
         console.error("Error loading the DoorLuxPlatform:", error);
