@@ -14,7 +14,8 @@
   "files": [
     "index.js",
     "DoorLuxPlatform.js",
-    "config.schema.json"
+    "config.schema.json",
+    "DoorLuxAccessory.js"
   ],
   "keywords": [
     "doorlux",
