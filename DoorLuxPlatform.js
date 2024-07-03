@@ -1,13 +1,14 @@
-import { Platform } from 'homebridge-lib/Platform';
-if (!Platform) {
-    console.error('Failed to load Platform from homebridge-lib');
-    process.exit(1); // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
-}
+import { Platform } from 'homebridge-lib/lib/Platform.js';
+import { API } from 'homebridge';
 
-// Define the DoorLuxPlatform class after the Platform has been imported
 class DoorLuxPlatform extends Platform {
     constructor(log, config, api) {
         super(log, config, api);
+
+        // Ensure hap is correctly initialized
+        this.hap = api.hap;
+        this.log = log;
+        this.config = config;
 
         // Initialize a map for door states
         this.doorStates = new Map();
@@ -23,7 +24,7 @@ class DoorLuxPlatform extends Platform {
         const { Service, Characteristic } = this.hap;
 
         // Create a LockMechanism Service with the specified name
-        this.service = this.createService(Service.LockMechanism, this.config.name);
+        this.service = new Service.LockMechanism(this.config.name);
 
         // Define the 'get' and 'set' events for the characteristics
         this.service.getCharacteristic(Characteristic.LockCurrentState)
