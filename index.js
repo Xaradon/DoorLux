@@ -2,14 +2,11 @@
 
 async function main(homebridge) {
     try {
-        console.log("Trying to load DoorLuxPlatform");
-        const { DoorLuxPlatform } = await import('./DoorLuxPlatform.js');
+        const { DoorLuxPlatform } = require('./DoorLuxPlatform.js');
         console.log("Imported DoorLuxPlatform:", DoorLuxPlatform);
 
         if (DoorLuxPlatform) {
-            console.log("DoorLuxPlatform is defined");
             if (DoorLuxPlatform.loadPlatform) {
-                console.log("DoorLuxPlatform.loadPlatform is defined");
                 DoorLuxPlatform.loadPlatform(homebridge, require('./package.json'), 'doorlux', DoorLuxPlatform);
                 console.log("Loaded DoorLuxPlatform");
             } else {
