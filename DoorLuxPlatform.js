@@ -31,11 +31,18 @@ class DoorLuxPlatform extends Platform {
     }
 
     createLockService(doorConfig) {
-        const { Service, Characteristic } = this.hap;
+        const { Service, Characteristic, Accessory } = this.hap;
 
         // Create a LockMechanism Service with the specified name
         const service = new Service.LockMechanism(doorConfig.name);
+
+        // Create an accessory for each door
+        const accessory = new Accessory(doorConfig.name, this.api.hap.uuid.generate(doorConfig.doorID));
+
+        accessory.addService(service);
+
         this.doorStates.set(String(doorConfig.doorID), {
+            accessory: accessory,
             service: service,
             current: Characteristic.LockCurrentState.UNSECURED,
             target: Characteristic.LockTargetState.UNSECURED
@@ -48,6 +55,9 @@ class DoorLuxPlatform extends Platform {
         service.getCharacteristic(Characteristic.LockTargetState)
             .onGet(() => this.handleLockTargetStateGet(doorConfig.doorID))
             .onSet((value) => this.handleLockTargetStateSet(doorConfig.doorID, value));
+
+        // Register the accessory
+        this.api.registerPlatformAccessories('homebridge-doorlux', 'doorlux', [accessory]);
     }
 
     initWebSocket() {
@@ -124,6 +134,7 @@ class DoorLuxPlatform extends Platform {
             const targetState = (doorState === 'closed') ? Characteristic.LockCurrentState.SECURED : Characteristic.LockCurrentState.UNSECURED;
 
             this.doorStates.set(doorID, {
+                accessory: this.doorStates.get(doorID).accessory,
                 service: this.doorStates.get(doorID).service,
                 current: currentState,
                 target: targetState
