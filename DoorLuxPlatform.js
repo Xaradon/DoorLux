@@ -5,7 +5,7 @@ const { Platform } = homebridgeLib;
 
 if (!Platform) {
     console.error('Failed to load Platform from homebridge-lib');
-    process.exit(1); // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
+    return; // Beendet die Ausführung, wenn Platform nicht geladen werden konnte
 }
 
 // Define the DoorLuxPlatform class after the Platform has been imported
