@@ -1,4 +1,4 @@
-import { Platform } from 'homebridge-lib/Platform.js';
+import { Platform } from 'homebridge-lib/Platform';
 import WebSocket from 'ws';
 
 // Define the DoorLuxPlatform class after the Platform has been imported
